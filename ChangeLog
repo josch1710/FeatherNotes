@@ -1,9 +1,28 @@
-V1.0.1
+V1.1.1
 ---------
+ * Simplified the code for setting the editor font.
+ * Enable/disable the Paste actions appropriately.
+ * Separate the inserted URLs with newline.
+ * Fixed the initial font of the node font dialog.
+ * Recognize `text/plain;charset=…` as plain text (Qt doesn't).
+ * Wait 60 sec for systray, but show the window after 20 sec if the tray isn't available.
+
+V1.1.0
+---------
+ * Fixed crash on pasting with empty clipboard.
+ * Fixed a bug in updating widget states after deleting a node.
+ * Fixed text zooming for documents that are saved by the Qt6 version.
+ * Corrected the tab stop distance.
+ * Added a workaround for a Qt bug related to the current character format.
  * Added a real Unix signal handler.
  * Removed "Embed Image" from the toolbar to make it uncluttered.
  * Better window placement on tray activation without X11.
  * Simplified finding of Qt modules with cmake.
+ * Added a workaround for a Qt6 bug that doesn't include newlines in the plain-text data of the copied text.
+ * Prevented total node deselection with Qt6.
+ * Silenced the compilation warnings with Qt 6.4.
+ * Corrected the context menus and tooltips on Wayland, by specifying their parent widgets.
+ * Better sizes for some dialogs.
 
 V1.0.0
 ---------

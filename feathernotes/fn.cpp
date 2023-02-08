@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Pedram Pourang (aka Tsu Jan) 2016-2022 <tsujan2000@gmail.com>
+ * Copyright (C) Pedram Pourang (aka Tsu Jan) 2016-2023 <tsujan2000@gmail.com>
  *
  * FeatherNotes is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -364,6 +364,25 @@ FN::FN (const QStringList& message, QWidget *parent) : QMainWindow (parent), ui 
     connect (ui->menuOpenRecently, &QMenu::aboutToShow, this, &FN::updateRecenMenu);
     connect (ui->actionClearRecent, &QAction::triggered, this, &FN::clearRecentMenu);
 
+    /* enable/disable paste actions appropriately */
+    connect (ui->menuEdit, &QMenu::aboutToShow, this, [this] {
+        if (QWidget *cw = ui->stackedWidget->currentWidget())
+        {
+            bool enablePaste = qobject_cast<TextEdit*>(cw)->canPaste();
+            ui->actionPaste->setEnabled (enablePaste);
+            ui->actionPasteHTML->setEnabled (enablePaste);
+        }
+        else
+        {
+            ui->actionPaste->setEnabled (false);
+            ui->actionPasteHTML->setEnabled (false);
+        }
+    });
+    connect (ui->menuEdit, &QMenu::aboutToHide, this, [this] {
+        ui->actionPaste->setEnabled (true);
+        ui->actionPasteHTML->setEnabled (true);
+    });
+
 #ifdef HAS_HUNSPELL
     connect (ui->actionCheckSpelling, &QAction::triggered, this, &FN::checkSpelling);
 #else
@@ -372,7 +391,7 @@ FN::FN (const QStringList& message, QWidget *parent) : QMainWindow (parent), ui 
 
     /* Once the tray icon is created, it'll persist even if the systray
        disappears temporarily. But for the tray icon to be created, the
-       systray should exist. Hence, we wait 20 sec for the systray at startup. */
+       systray should exist. Hence, we wait 60 sec for the systray at startup. */
     tray_ = nullptr;
     trayCounter_ = 0;
     if (hasTray_)
@@ -603,8 +622,10 @@ void FN::checkTray()
             createTrayIcon();
             trayCounter_ = 0; // not needed
         }
-        else if (trayCounter_ < 4)
+        else if (trayCounter_ < 12)
         {
+            if (trayCounter_ == 4) // show the window if the systray isn't found after 20 sec
+                activateFNWindow (true);
             trayTimer->start();
             ++trayCounter_;
         }
@@ -662,7 +683,7 @@ void FN::showContextMenu (const QPoint &p)
     QModelIndex index = ui->treeView->indexAt (p);
     if (!index.isValid()) return;
 
-    QMenu menu;
+    QMenu menu (this); // "this" is for Wayland, when the window isn't active
     menu.addAction (ui->actionPrepSibling);
     menu.addAction (ui->actionNewSibling);
     menu.addAction (ui->actionNewChild);
@@ -782,9 +803,7 @@ void FN::unZooming()
     if (!cw) return;
 
     TextEdit *textEdit = qobject_cast<TextEdit*>(cw);
-    textEdit->setFont (defaultFont_);
-    QFontMetricsF metrics (defaultFont_);
-    textEdit->setTabStopDistance (4 * metrics.horizontalAdvance (' '));
+    textEdit->setEditorFont (defaultFont_);
 
     /* this may be a zoom-out */
     rehighlight (textEdit);
@@ -2031,10 +2050,8 @@ TextEdit *FN::newWidget()
     textEdit->viewport()->setMouseTracking (true);
     textEdit->setContextMenuPolicy (Qt::CustomContextMenu);
     /* we want consistent widgets */
-    textEdit->setFont (defaultFont_); // needed when the application font changes
+    textEdit->setEditorFont (defaultFont_); // needed when the application font changes
     textEdit->document()->setDefaultFont (defaultFont_);
-    QFontMetricsF metrics (defaultFont_);
-    textEdit->setTabStopDistance (4 * metrics.horizontalAdvance (' '));
 
     int index = ui->stackedWidget->currentIndex();
     ui->stackedWidget->insertWidget (index + 1, textEdit);
@@ -2154,6 +2171,7 @@ void FN::txtContextMenu (const QPoint &p)
         menu->addSeparator();
         sepAdded = true;
     }
+    ui->actionPasteHTML->setEnabled (textEdit->canPaste());
 
     if (hasSel)
     {
@@ -2230,15 +2248,18 @@ void FN::selChanged (const QItemSelection &selected, const QItemSelection &desel
 {
     closeWarningBar();
 
-    if (selected.isEmpty()) // if the last node is closed
+    if (selected.isEmpty())
     {
-        if (ui->lineEdit->isVisible())
-            showHideSearch();
-        if (ui->dockReplace->isVisible())
-            replaceDock();
-        enableActions (false);
-        /*if (QWidget *widget = ui->stackedWidget->currentWidget())
-            widget->setVisible (false);*/
+        if (model_->rowCount() == 0) // if the last node is closed
+        {
+            if (ui->lineEdit->isVisible())
+                showHideSearch();
+            if (ui->dockReplace->isVisible())
+                replaceDock();
+            enableActions (false);
+            /*if (QWidget *widget = ui->stackedWidget->currentWidget())
+                widget->setVisible (false);*/
+        }
         return;
     }
     /*else if (deselected.isEmpty()) // a row is selected after Ctrl + left click
@@ -2329,7 +2350,7 @@ void FN::selChanged (const QItemSelection &selected, const QItemSelection &desel
         DomItem *item = static_cast<DomItem*>(index.internalPointer());
         QDomNodeList list = item->node().childNodes();
         text = list.item (0).nodeValue();
-        /* this is needed for text zooming */
+        /* NOTE: This is needed for text zooming. */
         static const QString htmlStr ("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                       "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                       "p, li { white-space: pre-wrap; }\n"
@@ -2338,7 +2359,7 @@ void FN::selChanged (const QItemSelection &selected, const QItemSelection &desel
         bool defaultDocColor (bgColor_ == QColor (Qt::white) && fgColor_ == QColor (Qt::black));
         if (defaultDocColor)
         {
-            static const QRegularExpression htmlRegex (R"(^<!DOCTYPE[A-Za-z0-9/<>,;.:\-={}\s"]+</style></head><body\sstyle=[A-Za-z0-9/<>;:\-\s"']+>)");
+            static const QRegularExpression htmlRegex (R"(^<!DOCTYPE[A-Za-z0-9/<>,;.:\-={}\s"\\]+</style></head><body\sstyle=[A-Za-z0-9/<>;:\-\s"']+>)");
             if (text.indexOf (htmlRegex, 0, &match) > -1)
                 text.replace (0, match.capturedLength(), htmlStr);
         }
@@ -2349,7 +2370,7 @@ void FN::selChanged (const QItemSelection &selected, const QItemSelection &desel
             /* To enable the default stylesheet, we should set the HTML text of the document.
                Setting the HTML text of the editor above is needed for empty nodes. */
             QString str = textEdit->document()->toHtml();
-            static const QRegularExpression htmlRegex1 (R"(^<!DOCTYPE[A-Za-z0-9/<>,;.:\-={}\s"]+</style></head><body\sstyle=[A-Za-z0-9/;:\-\s"'#=]+>(<br\s*/>(</p>)?)?)");
+            static const QRegularExpression htmlRegex1 (R"(^<!DOCTYPE[A-Za-z0-9/<>,;.:\-={}\s"\\]+</style></head><body\sstyle=[A-Za-z0-9/;:\-\s"'#=]+>(<br\s*/>(</p>)?)?)");
             if (str.indexOf (htmlRegex1, 0, &match) > -1)
                 str.replace (0, match.capturedLength(), htmlStr);
             textEdit->document()->setHtml (str);
@@ -2358,6 +2379,14 @@ void FN::selChanged (const QItemSelection &selected, const QItemSelection &desel
             textEdit->setTextCursor (cur);
             textEdit->document()->setModified (false);
         }
+        else
+        {
+            /* because of a Qt bug, this is needed for
+               QTextEdit::currentCharFormat() to be correct */
+            QTextCursor cur = textEdit->textCursor();
+            cur.clearSelection ();
+            textEdit->setTextCursor (cur);
+        }
 
         connect (textEdit->document(), &QTextDocument::modificationChanged, this, &FN::setSaveEnabled);
         connect (textEdit->document(), &QTextDocument::undoAvailable, this, &FN::setUndoEnabled);
@@ -2365,7 +2394,8 @@ void FN::selChanged (const QItemSelection &selected, const QItemSelection &desel
         connect (textEdit, &QTextEdit::currentCharFormatChanged, this, &FN::formatChanged);
         connect (textEdit, &QTextEdit::cursorPositionChanged, this, &FN::alignmentChanged);
         connect (textEdit, &QTextEdit::cursorPositionChanged, this, &FN::directionChanged);
-        connect (textEdit->document(), &QTextDocument::contentsChange, [this] (int/* pos*/, int charsRemoved, int charsAdded) {
+        connect (textEdit->document(), &QTextDocument::contentsChange,
+                 [this] (int/* pos*/, int charsRemoved, int charsAdded) {
             if (charsRemoved == charsAdded)
             { // a special case, where the following slots aren't called automatically
                 alignmentChanged();
@@ -2447,7 +2477,7 @@ void FN::formatChanged (const QTextCharFormat &format)
     ui->actionSub->setChecked (format.verticalAlignment() == QTextCharFormat::AlignSubScript ?
                                true : false);
 
-    if (format.fontWeight() == QFont::Bold)
+    if (format.fontWeight() > QFont::Medium) // who knows what will happen after Qt upgrades?
         ui->actionBold->setChecked (true);
     else
         ui->actionBold->setChecked (false);
@@ -3179,13 +3209,11 @@ void FN::textFontDialog()
                 QHash<DomItem*, TextEdit*>::iterator it;
                 for (it = widgets_.begin(); it != widgets_.end(); ++it)
                 {
-                    it.value()->setFont (defaultFont_); // needed when the application font changes
+                    it.value()->setEditorFont (defaultFont_); // needed when the application font changes
                     it.value()->document()->setDefaultFont (defaultFont_);
                     QTextCursor cursor = it.value()->textCursor();
                     cursor.select (QTextCursor::Document);
                     cursor.mergeCharFormat (fmt);
-                    QFontMetricsF metrics (defaultFont_);
-                    it.value()->setTabStopDistance (4 * metrics.horizontalAdvance (' '));
                 }
 
                 /* also, change the font for all nodes that aren't shown yet */
@@ -3220,7 +3248,7 @@ void FN::nodeFontDialog()
 {
     closeWinDialogs();
 
-    auto dlg = new QFontDialog (defaultFont_, this);
+    auto dlg = new QFontDialog (nodeFont_, this);
     dlg->setAttribute (Qt::WA_DeleteOnClose, true);
     dlg->setWindowTitle (tr ("Select Node Font"));
     dlg->open();
@@ -3582,8 +3610,6 @@ void FN::findInTags()
     grid->addWidget (closeButton, 1, 0, Qt::AlignRight);
 
     TagsDialog->setLayout (grid);
-    /*TagsDialog->resize (TagsDialog->minimumWidth(),
-                        TagsDialog->minimumHeight());*/
     TagsDialog->show();
     /*TagsDialog->move (x() + width()/2 - TagsDialog->width(),
                       y() + height()/2 - TagsDialog->height());*/
@@ -3764,8 +3790,8 @@ void FN::closeReplaceDock (bool visible)
     hlight();
 
     /* return focus to the document */
-    if (ui->stackedWidget->count() > 0)
-        qobject_cast<TextEdit*>(ui->stackedWidget->currentWidget())->setFocus();
+    if (QWidget *cw = ui->stackedWidget->currentWidget())
+        cw->setFocus();
 }
 /*************************/
 // Resize the floating dock widget to its minimum size.
@@ -4083,8 +4109,8 @@ void FN::showAndFocus()
 {
     show();
     raise();
-    if (ui->stackedWidget->count() > 0)
-        qobject_cast<TextEdit*>(ui->stackedWidget->currentWidget())->setFocus();
+    if (QWidget *cw = ui->stackedWidget->currentWidget())
+        cw->setFocus();
     if (!static_cast<FNSingleton*>(qApp)->isWayland())
     { // to bypass focus stealing prevention
         activateWindow();
@@ -4100,7 +4126,7 @@ void FN::activateFNWindow (bool noDelay)
     FNSingleton *singleton = static_cast<FNSingleton*>(qApp);
     if (noDelay || !findChildren<QDialog*>().isEmpty() || hasBlockingDialog())
     {
-        show();
+        showNormal();
         raise();
         if (!singleton->isWayland())
             activateWindow();
@@ -4786,16 +4812,16 @@ void FN::saveImage()
                     QFileInfo info = QFileInfo (lastImgPath_);
                     QString shownName = info.fileName();
                     extension = shownName.split (".").last();
-                    shownName.chop (extension.count() + 1);
+                    shownName.chop (extension.size() + 1);
                     /* if the name ends with a number following a dash,
                        use it; otherwise, increase the number by one */
                     int m = 0;
                     QRegularExpression exp ("-[1-9]+[0-9]*");
                     indx = shownName.lastIndexOf (QRegularExpression ("-[1-9]+[0-9]*"), -1, &match);
-                    if (indx > -1 && indx == shownName.count() - match.capturedLength())
+                    if (indx > -1 && indx == shownName.size() - match.capturedLength())
                     {
                         QString number = shownName.split ("-").last();
-                        shownName.chop (number.count() + 1);
+                        shownName.chop (number.size() + 1);
                         m = number.toInt() + 1;
                     }
                     n = m > n ? m : n + 1;
@@ -4842,9 +4868,9 @@ void FN::addTable()
     connect (okButton, &QAbstractButton::clicked, dialog, &QDialog::accept);
 
     grid->addWidget (labelRow, 0, 0, Qt::AlignRight);
-    grid->addWidget (spinBoxRow, 0, 1, 1, 2, Qt::AlignLeft);
+    grid->addWidget (spinBoxRow, 0, 1, 1, 2);
     grid->addWidget (labelCol, 1, 0, Qt::AlignRight);
-    grid->addWidget (spinBoxCol, 1, 1, 1, 2, Qt::AlignLeft);
+    grid->addWidget (spinBoxCol, 1, 1, 1, 2);
     grid->addItem (spacer, 2, 0);
     grid->addWidget (cancelButton, 3, 0, 1, 2, Qt::AlignRight);
     grid->addWidget (okButton, 3, 2, Qt::AlignLeft);
@@ -4852,6 +4878,7 @@ void FN::addTable()
     grid->setRowStretch (2, 1);
 
     dialog->setLayout (grid);
+    dialog->resize (dialog->size().expandedTo (QSize (300, 0)));
 
     dialog->open();
     connect (dialog, &QDialog::finished, cw, [this, cw, spinBoxRow, spinBoxCol] (int res) {
@@ -5800,8 +5827,6 @@ void FN::exportHTML()
     grid->setRowStretch (2, 1);
 
     dialog->setLayout (grid);
-    /*dialog->resize (dialog->minimumWidth(),
-                    dialog->minimumHeight());*/
     /*dialog->show();
     dialog->move (x() + width()/2 - dialog->width(),
                   y() + height()/2 - dialog->height());*/
@@ -5990,7 +6015,7 @@ void FN::setHTMLName (bool checked)
     {
         QString last = strList.last();
         int lstIndex = str.lastIndexOf (last);
-        fname = str.replace (lstIndex, last.count(), fname);
+        fname = str.replace (lstIndex, last.size(), fname);
     }
 
     htmlPahEntry_->setText (fname);
@@ -6087,6 +6112,7 @@ void FN::setPswd()
     label->setVisible (false);
 
     dialog->setLayout (grid);
+    dialog->resize (dialog->size().expandedTo (QSize (300, 0)));
 
     dialog->open();
 }
@@ -6155,6 +6181,7 @@ bool FN::isPswrdCorrect (const QString &file)
     lineEdit->setPlaceholderText (tr ("Enter Password"));
     connect (lineEdit, &QLineEdit::returnPressed, this, &FN::checkPswrd);
     QLabel *pathLabel = new QLabel(file);
+    pathLabel->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
     pathLabel->setWordWrap (true);
     pathLabel->setAlignment (Qt::AlignCenter);
     QLabel *label = new QLabel();
@@ -6177,8 +6204,7 @@ bool FN::isPswrdCorrect (const QString &file)
     label->setVisible (false);
 
     dialog->setLayout (grid);
-    /*dialog->resize (dialog->minimumWidth(),
-                    dialog->minimumHeight());*/
+    dialog->resize (dialog->size().expandedTo (QSize (300, 0)));
     /*dialog->show();
     dialog->move (x() + width()/2 - dialog->width(),
                   y() + height()/2 - dialog->height());*/

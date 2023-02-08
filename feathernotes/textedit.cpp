@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Pedram Pourang (aka Tsu Jan) 2016-2021 <tsujan2000@gmail.com>
+ * Copyright (C) Pedram Pourang (aka Tsu Jan) 2016-2023 <tsujan2000@gmail.com>
  *
  * FeatherNotes is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -31,9 +31,11 @@
 
 #define SCROLL_FRAMES_PER_SEC 50
 #define SCROLL_DURATION 200 // in ms
-static const int scrollAnimFrames = SCROLL_FRAMES_PER_SEC * SCROLL_DURATION / 1000;
 
 namespace FeatherNotes {
+
+static const int scrollAnimFrames = SCROLL_FRAMES_PER_SEC * SCROLL_DURATION / 1000;
+static const QRegularExpression startingSpaces (R"(^\s+)");
 
 TextEdit::TextEdit (QWidget *parent) : QTextEdit (parent)
 {
@@ -41,7 +43,7 @@ TextEdit::TextEdit (QWidget *parent) : QTextEdit (parent)
     autoBracket = false;
     autoReplace = false;
     textTab_ = "    "; // the default text tab is four spaces
-    pressPoint = QPoint();
+    pressPoint_ = QPoint();
     scrollTimer_ = nullptr;
     isCopyOrCut_ = false;
 
@@ -65,7 +67,7 @@ QString TextEdit::remainingSpaces (const QString& spaceTab, const QTextCursor& c
     QTextCursor tmp = cursor;
     QString txt = cursor.block().text().left (cursor.positionInBlock());
     QFontMetricsF fm = QFontMetricsF (document()->defaultFont());
-    qreal spaceL = fm.horizontalAdvance (" ");
+    qreal spaceL = fm.horizontalAdvance (' ');
     int n = 0, i = 0;
     while ((i = txt.indexOf("\t", i)) != -1)
     { // find tab widths in terms of spaces
@@ -76,8 +78,8 @@ QString TextEdit::remainingSpaces (const QString& spaceTab, const QTextCursor& c
         n += qMax (qRound (qAbs (x) / spaceL) - 1, 0); // x is negative for RTL
         ++i;
     }
-    n += txt.count();
-    n = spaceTab.count() - n % spaceTab.count();
+    n += txt.size();
+    n = spaceTab.size() - n % spaceTab.size();
     QString res;
     for (int i = 0 ; i < n; ++i)
         res += " ";
@@ -94,7 +96,7 @@ QTextCursor TextEdit::backTabCursor (const QTextCursor& cursor, bool twoSpace) c
     const QString blockText = cursor.block().text();
     int indx = 0;
     QRegularExpressionMatch match;
-    if (blockText.indexOf (QRegularExpression (R"(^\s+)"), 0, &match) > -1)
+    if (blockText.indexOf (startingSpaces, 0, &match) > -1)
         indx = match.capturedLength();
     else
         return tmp;
@@ -102,7 +104,7 @@ QTextCursor TextEdit::backTabCursor (const QTextCursor& cursor, bool twoSpace) c
 
     QString txt = blockText.left (indx);
     QFontMetricsF fm = QFontMetricsF (document()->defaultFont());
-    qreal spaceL = fm.horizontalAdvance (" ");
+    qreal spaceL = fm.horizontalAdvance (' ');
     int n = 0, i = 0;
     while ((i = txt.indexOf("\t", i)) != -1)
     { // find tab widths in terms of spaces
@@ -113,9 +115,9 @@ QTextCursor TextEdit::backTabCursor (const QTextCursor& cursor, bool twoSpace) c
         n += qMax (qRound (qAbs (x) / spaceL) - 1, 0);
         ++i;
     }
-    n += txt.count();
-    n = n % textTab_.count();
-    if (n == 0) n = textTab_.count();
+    n += txt.size();
+    n = n % textTab_.size();
+    if (n == 0) n = textTab_.size();
 
     if (twoSpace) n = qMin (n, 2);
 
@@ -529,7 +531,7 @@ void TextEdit::keyPressEvent (QKeyEvent *event)
                 /* skip all spaces to align the real text */
                 int indx = 0;
                 QRegularExpressionMatch match;
-                if (cursor.block().text().indexOf (QRegularExpression (R"(^\s+)"), 0, &match) > -1)
+                if (cursor.block().text().indexOf (startingSpaces, 0, &match) > -1)
                     indx = match.capturedLength();
                 cursor.setPosition (cursor.block().position() + indx);
                 if (event->modifiers() & Qt::ControlModifier)
@@ -670,7 +672,7 @@ void TextEdit::keyPressEvent (QKeyEvent *event)
             int p = cur.positionInBlock();
             int indx = 0;
             QRegularExpressionMatch match;
-            if (cur.block().text().indexOf (QRegularExpression ("^\\s+"), 0, &match) > -1)
+            if (cur.block().text().indexOf (startingSpaces, 0, &match) > -1)
                 indx = match.capturedLength();
             if (p > 0)
             {
@@ -739,12 +741,12 @@ void TextEdit::resizeEvent (QResizeEvent *e)
 bool TextEdit::event (QEvent *e)
 {
     if (e->type() == QEvent::ToolTip)
-    {
+    { // "this" is for Wayland, when the window isn't active
         QHelpEvent *helpEvent = static_cast<QHelpEvent *>(e);
         QString str = anchorAt (helpEvent->pos());
         if (!str.isEmpty())
             QToolTip::showText (helpEvent->globalPos(),
-                                "<p style='white-space:pre'>" + str + "</p>");
+                                "<p style='white-space:pre'>" + str + "</p>", this);
         else
         {
             QToolTip::hideText();
@@ -760,6 +762,20 @@ QMimeData* TextEdit::createMimeDataFromSelection() const
 {
     /* this is for giving only plain text to the selection clipboard
        and leaving the main clipboard to QTextEdit */
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+    /* WARNING: Qt6 has a bug that doesn't include newlines in the
+                plain-text data of "QTextEdit::createMimeDataFromSelection()". */
+    QTextCursor cursor = textCursor();
+    if (cursor.hasSelection())
+    {
+        QMimeData *mimeData = new QMimeData;
+        mimeData->setText (cursor.selection().toPlainText());
+        if (isCopyOrCut_)
+            mimeData->setHtml (cursor.selection().toHtml());
+        return mimeData;
+    }
+    return nullptr;
+#else
     if (!isCopyOrCut_)
     {
         QTextCursor cursor = textCursor();
@@ -772,20 +788,37 @@ QMimeData* TextEdit::createMimeDataFromSelection() const
         return nullptr;
     }
     return QTextEdit::createMimeDataFromSelection();
+#endif
 }
 /*************************/
+static bool containsPlainText (const QStringList &list)
+{
+    for (const auto &str : list)
+    {
+        if (str.compare ("text/plain", Qt::CaseInsensitive) == 0
+            || str.startsWith ("text/plain;charset=", Qt::CaseInsensitive))
+        {
+            return true;
+        }
+    }
+    return false;
+}
 bool TextEdit::canInsertFromMimeData (const QMimeData *source) const
 {
+    if (source == nullptr) return false;
     if (source->hasImage() || source->hasUrls())
         return true;
     else
-        return QTextEdit::canInsertFromMimeData (source);
+    {
+        return QTextEdit::canInsertFromMimeData (source)
+               || (containsPlainText (source->formats()) && !source->text().isEmpty());
+    }
 }
-/*************************/
 void TextEdit::insertFromMimeData (const QMimeData *source)
 {
+    if (source == nullptr) return;
     if (source->hasImage())
-    {
+    { // an image is copied directly
         QImage image = qvariant_cast<QImage>(source->imageData());
         if (!image.isNull())
         {
@@ -797,32 +830,56 @@ void TextEdit::insertFromMimeData (const QMimeData *source)
 
             insertHtml (QString ("<img src=\"data:image;base64,%1\" />")
                         .arg (QString (rawarray.toBase64())));
+            ensureCursorVisible();
         }
     }
     else if (source->hasUrls())
     {
+        bool imageInserted = false;
         const auto urls = source->urls();
+        bool multiple (urls.count() > 1);
+        QTextCursor cur = textCursor();
+        cur.beginEditBlock();
         for (const QUrl &url : urls)
         {
             QMimeDatabase mimeDatabase;
             QMimeType mimeType = mimeDatabase.mimeTypeForFile (QFileInfo (url.toLocalFile()));
             QByteArray ba = mimeType.name().toUtf8();
             if (QImageReader::supportedMimeTypes().contains (ba))
+            {
                 emit imageDropped (url.path());
+                imageInserted = true;
+            }
             else
             {
                 if (url.fileName().endsWith (".fnx")
                     || mimeType.name() == "text/feathernotes-fnx")
                 {
-                    emit FNDocDropped (url.path());
+                    cur.endEditBlock();
+                    ensureCursorVisible();
+                    /* use a timer to allow the app to process the inserted URls/images */
+                    QTimer::singleShot (0, this, [this, url] () {
+                        emit FNDocDropped (url.path());
+                    });
                     return; // only open the first file
                 }
                 else
-                    textCursor().insertText (url.toString());
+                {
+                    if (imageInserted)
+                    {
+                        cur.insertText ("\n");
+                        imageInserted = false;
+                    }
+                    cur.insertText (url.toString());
+                    if (multiple)
+                        cur.insertText ("\n");
+                }
             }
         }
+        cur.endEditBlock();
+        ensureCursorVisible();
     }
-    else
+    else if (containsPlainText (source->formats()) && !source->text().isEmpty())
         QTextEdit::insertFromMimeData (source);
 }
 /*************************/
@@ -847,7 +904,7 @@ void TextEdit::mousePressEvent (QMouseEvent *e)
             && e->buttons() == Qt::LeftButton)
         {
             tripleClickTimer_.invalidate();
-            if (!(qApp->keyboardModifiers() & Qt::ControlModifier))
+            if (e->modifiers() != Qt::ControlModifier)
             {
                 QTextCursor txtCur = textCursor();
                 const QString blockText = txtCur.block().text();
@@ -887,7 +944,7 @@ void TextEdit::mousePressEvent (QMouseEvent *e)
     QTextEdit::mousePressEvent (e);
 
     if (e->button() == Qt::LeftButton)
-        pressPoint = e->pos();
+        pressPoint_ = e->pos();
 }
 
 /*************************/
@@ -899,7 +956,7 @@ void TextEdit::mouseReleaseEvent (QMouseEvent *e)
 
     QString str = anchorAt (e->pos());
     if (!str.isEmpty()
-        && cursorForPosition (e->pos()) == cursorForPosition (pressPoint))
+        && cursorForPosition (e->pos()) == cursorForPosition (pressPoint_))
     {
         QUrl url (str);
         if (url.isRelative()) // treat relative URLs as local paths
@@ -909,7 +966,7 @@ void TextEdit::mouseReleaseEvent (QMouseEvent *e)
         if (!QProcess::startDetached ("gio", QStringList() << "open" << url.toString()))
             QDesktopServices::openUrl (url);
     }
-    pressPoint = QPoint();
+    pressPoint_ = QPoint();
 }
 /*************************/
 void TextEdit::mouseDoubleClickEvent (QMouseEvent *e)
@@ -920,7 +977,7 @@ void TextEdit::mouseDoubleClickEvent (QMouseEvent *e)
     /* Select the text between spaces with Ctrl.
        NOTE: QTextEdit should process the event before this. */
     if (e->button() == Qt::LeftButton
-        && (qApp->keyboardModifiers() & Qt::ControlModifier))
+        && e->modifiers() == Qt::ControlModifier)
     {
         QTextCursor txtCur = textCursor();
         const int blockPos = txtCur.block().position();
@@ -954,7 +1011,7 @@ void TextEdit::mouseDoubleClickEvent (QMouseEvent *e)
 void TextEdit::wheelEvent (QWheelEvent *e)
 {
     QPoint deltaPoint = e->angleDelta();
-    if (e->modifiers() & Qt::ControlModifier)
+    if (e->modifiers() == Qt::ControlModifier)
     {
         float delta = deltaPoint.y() / 120.f;
         zooming (delta);
@@ -1083,6 +1140,16 @@ void TextEdit::scrollSmoothly()
         scrollTimer_->stop();
 }
 /*************************/
+void TextEdit::setEditorFont (const QFont &f)
+{
+    setFont (f);
+    /* WARNING: The font given to setFont() shouldn't be used directly because,
+                as Qt doc explains, its properties are combined with the widget's
+                default font to form the widget's final font. */
+    QFontMetricsF metrics (font()); // see FN::unZooming()
+    setTabStopDistance (metrics.horizontalAdvance (textTab_));
+}
+/*************************/
 void TextEdit::zooming (float range)
 {
     if (range == 0.f) return;
@@ -1090,9 +1157,7 @@ void TextEdit::zooming (float range)
     const float newSize = static_cast<float>(f.pointSizeF()) + range;
     if (newSize <= 0) return;
     f.setPointSizeF (static_cast<qreal>(newSize));
-    setFont (f);
-    QFontMetricsF metrics (f);
-    setTabStopDistance (4 * metrics.horizontalAdvance (' '));
+    setEditorFont (f);
 
     /* if this is a zoom-out, the text will need
        to be formatted and/or highlighted again */
