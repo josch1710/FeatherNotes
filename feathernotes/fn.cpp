@@ -1472,7 +1472,7 @@ void FN::openFile()
     dialog->setAcceptMode (QFileDialog::AcceptOpen);
     dialog->setWindowTitle (tr ("Open file..."));
     dialog->setFileMode (QFileDialog::ExistingFiles);
-    dialog->setNameFilter (tr ("FeatherNotes documents (*.fnx);;All Files (*)"));
+    dialog->setNameFilter (tr ("FeatherNotes documents") + " (*.fnx);;" + tr ("All Files") + " (*)");
     if (QFileInfo (path).isDir())
         dialog->setDirectory (path);
     else
@@ -1749,7 +1749,7 @@ bool FN::saveFile()
             dialog.setAcceptMode (QFileDialog::AcceptSave);
             dialog.setWindowTitle (tr ("Save As..."));
             dialog.setFileMode (QFileDialog::AnyFile);
-            dialog.setNameFilter (tr ("FeatherNotes documents (*.fnx);;All Files (*)"));
+            dialog.setNameFilter (tr ("FeatherNotes documents") + " (*.fnx);;" + tr ("All Files") + " (*)");
             dialog.setDirectory (fname.section ("/", 0, -2)); // workaround for KDE
             dialog.selectFile (fname);
             dialog.autoScroll();
@@ -1772,7 +1772,7 @@ bool FN::saveFile()
         dialog.setAcceptMode (QFileDialog::AcceptSave);
         dialog.setWindowTitle (tr ("Save As..."));
         dialog.setFileMode (QFileDialog::AnyFile);
-        dialog.setNameFilter (tr ("FeatherNotes documents (*.fnx);;All Files (*)"));
+        dialog.setNameFilter (tr ("FeatherNotes documents") + " (*.fnx);;" + tr ("All Files") + " (*)");
         dialog.setDirectory (fname.section ("/", 0, -2)); // workaround for KDE
         dialog.selectFile (fname);
         dialog.autoScroll();
@@ -3019,7 +3019,7 @@ void FN::nodeIcon()
         dialog.setAcceptMode (QFileDialog::AcceptOpen);
         dialog.setWindowTitle (tr ("Open Image..."));
         dialog.setFileMode (QFileDialog::ExistingFiles);
-        dialog.setNameFilter (tr ("Image Files (*.svg *.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"));
+        dialog.setNameFilter (tr ("Image Files") + " (*.svg *.png *.jpg *.jpeg *.bmp *.gif);;" + tr ("All Files") + " (*)");
         dialog.setDirectory (path);
         if (dialog.exec())
         {
@@ -4458,6 +4458,11 @@ void FN::imageEmbed (const QString &path)
 {
     if (path.isEmpty()) return;
 
+    QImage img = QImage (path);
+    if (img.isNull()) return;
+    QSize imgSize = img.size();
+    if (imgSize.isEmpty()) return;
+
     QFile file (path);
     if (!file.open (QIODevice::ReadOnly))
         return;
@@ -4472,8 +4477,6 @@ void FN::imageEmbed (const QString &path)
     file.close();
     QByteArray base64array = rawarray.toBase64();
 
-    QImage img = QImage (path);
-    QSize imgSize = img.size();
     int w, h;
     if (qobject_cast<QDialog*>(QObject::sender())) // from embedImage()
     {
@@ -4520,7 +4523,7 @@ void FN::setImagePath (bool)
     dialog.setAcceptMode (QFileDialog::AcceptOpen);
     dialog.setWindowTitle (tr ("Open Image..."));
     dialog.setFileMode (QFileDialog::ExistingFiles);
-    dialog.setNameFilter (tr ("Image Files (*.svg *.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)"));
+    dialog.setNameFilter (tr ("Image Files") + " (*.svg *.png *.jpg *.jpeg *.bmp *.gif);;" + tr ("All Files") + " (*)");
     if (QFileInfo (path).isDir())
         dialog.setDirectory (path);
     else
@@ -4791,7 +4794,7 @@ void FN::saveImage()
                 dialog.setAcceptMode (QFileDialog::AcceptSave);
                 dialog.setWindowTitle (tr ("Save Image As..."));
                 dialog.setFileMode (QFileDialog::AnyFile);
-                dialog.setNameFilter (tr ("Image Files (*.png *.jpg *.jpeg *.bmp);;All Files (*)"));
+                dialog.setNameFilter (tr ("Image Files") + " (*.png *.jpg *.jpeg *.bmp);;" + tr ("All Files") + " (*)");
                 dialog.setDirectory (path.section ("/", 0, -2)); // workaround for KDE
                 dialog.selectFile (QString ("%1-%2.%3").arg (path).arg (n).arg (extension));
                 dialog.autoScroll();
@@ -6033,7 +6036,7 @@ void FN::setHTMLPath (bool)
     dialog.setAcceptMode (QFileDialog::AcceptSave);
     dialog.setWindowTitle (tr ("Save HTML As..."));
     dialog.setFileMode (QFileDialog::AnyFile);
-    dialog.setNameFilter (tr ("HTML Files (*.html *.htm)"));
+    dialog.setNameFilter (tr ("HTML Files") + " (*.html *.htm)");
     dialog.setDirectory (path.section ("/", 0, -2)); // workaround for KDE
     dialog.selectFile (path);
     dialog.autoScroll();

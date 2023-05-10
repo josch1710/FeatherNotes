@@ -1015,14 +1015,14 @@
     <message>
         <location filename="../../fn.cpp" line="907"/>
         <location filename="../../fn.cpp" line="2821"/>
-        <location filename="../../fn.cpp" line="4763"/>
+        <location filename="../../fn.cpp" line="4766"/>
         <source>Yes</source>
         <translation>כן</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="908"/>
         <location filename="../../fn.cpp" line="2822"/>
-        <location filename="../../fn.cpp" line="4764"/>
+        <location filename="../../fn.cpp" line="4767"/>
         <source>No</source>
         <translation>לא</translation>
     </message>
@@ -1053,11 +1053,11 @@
         <location filename="../../fn.cpp" line="3306"/>
         <location filename="../../fn.cpp" line="4342"/>
         <location filename="../../fn.cpp" line="4427"/>
-        <location filename="../../fn.cpp" line="4602"/>
-        <location filename="../../fn.cpp" line="4865"/>
-        <location filename="../../fn.cpp" line="5813"/>
-        <location filename="../../fn.cpp" line="6092"/>
-        <location filename="../../fn.cpp" line="6190"/>
+        <location filename="../../fn.cpp" line="4605"/>
+        <location filename="../../fn.cpp" line="4868"/>
+        <location filename="../../fn.cpp" line="5816"/>
+        <location filename="../../fn.cpp" line="6095"/>
+        <location filename="../../fn.cpp" line="6193"/>
         <source>Cancel</source>
         <translation>ביטול</translation>
     </message>
@@ -1068,7 +1068,7 @@
     </message>
     <message>
         <location filename="../../fn.cpp" line="1650"/>
-        <location filename="../../fn.cpp" line="5939"/>
+        <location filename="../../fn.cpp" line="5942"/>
         <source>&lt;center&gt;&lt;b&gt;&lt;big&gt;Cannot be saved!&lt;/big&gt;&lt;/b&gt;&lt;/center&gt;</source>
         <translation>&lt;center&gt;&lt;b&gt;&lt;big&gt;לא ניתן לשמור!&lt;/big&gt;&lt;/b&gt;&lt;/center&gt;</translation>
     </message>
@@ -1082,6 +1082,23 @@
         <location filename="../../fn.cpp" line="1773"/>
         <source>Save As...</source>
         <translation>שמירה בשם…</translation>
+    </message>
+    <message>
+        <location filename="../../fn.cpp" line="1475"/>
+        <location filename="../../fn.cpp" line="1752"/>
+        <location filename="../../fn.cpp" line="1775"/>
+        <source>FeatherNotes documents</source>
+        <translation>מסמכי FeatherNotes</translation>
+    </message>
+    <message>
+        <location filename="../../fn.cpp" line="1475"/>
+        <location filename="../../fn.cpp" line="1752"/>
+        <location filename="../../fn.cpp" line="1775"/>
+        <location filename="../../fn.cpp" line="3022"/>
+        <location filename="../../fn.cpp" line="4526"/>
+        <location filename="../../fn.cpp" line="4797"/>
+        <source>All Files</source>
+        <translation>כל הקבצים</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="2818"/>
@@ -1106,13 +1123,20 @@
         <location filename="../../fn.cpp" line="3307"/>
         <location filename="../../fn.cpp" line="4344"/>
         <location filename="../../fn.cpp" line="4428"/>
-        <location filename="../../fn.cpp" line="4603"/>
-        <location filename="../../fn.cpp" line="4866"/>
-        <location filename="../../fn.cpp" line="5815"/>
-        <location filename="../../fn.cpp" line="6093"/>
-        <location filename="../../fn.cpp" line="6191"/>
+        <location filename="../../fn.cpp" line="4606"/>
+        <location filename="../../fn.cpp" line="4869"/>
+        <location filename="../../fn.cpp" line="5818"/>
+        <location filename="../../fn.cpp" line="6096"/>
+        <location filename="../../fn.cpp" line="6194"/>
         <source>OK</source>
         <translation>אישור</translation>
+    </message>
+    <message>
+        <location filename="../../fn.cpp" line="3022"/>
+        <location filename="../../fn.cpp" line="4526"/>
+        <location filename="../../fn.cpp" line="4797"/>
+        <source>Image Files</source>
+        <translation>קובצי תמונות</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="3114"/>
@@ -1169,6 +1193,11 @@
         <translation>הוספת קישור</translation>
     </message>
     <message>
+        <location filename="../../fn.cpp" line="6039"/>
+        <source>HTML Files</source>
+        <translation>קובצי HTML‏</translation>
+    </message>
+    <message>
         <location filename="../../fn.cpp" line="2998"/>
         <location filename="../../fn.cpp" line="4412"/>
         <source>Image path</source>
@@ -1182,13 +1211,13 @@
     </message>
     <message>
         <location filename="../../fn.cpp" line="4424"/>
-        <location filename="../../fn.cpp" line="4599"/>
+        <location filename="../../fn.cpp" line="4602"/>
         <source>Scaling percentage</source>
         <translation>אחוז שינוי גודל</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="3020"/>
-        <location filename="../../fn.cpp" line="4521"/>
+        <location filename="../../fn.cpp" line="4524"/>
         <source>Open Image...</source>
         <translation>פתיחת תמונה…</translation>
     </message>
@@ -1196,19 +1225,13 @@
         <location filename="../../fn.cpp" line="638"/>
         <source>System tray is not available.
 Please disable tray in Preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>מגש המערכת אינו זמין.
+נא להשבית את המגש בהעדפות.</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="954"/>
         <source>New Node</source>
         <translation>מפרק חדש</translation>
-    </message>
-    <message>
-        <location filename="../../fn.cpp" line="1475"/>
-        <location filename="../../fn.cpp" line="1752"/>
-        <location filename="../../fn.cpp" line="1775"/>
-        <source>FeatherNotes documents (*.fnx);;All Files (*)</source>
-        <translation>מסמכי FeatherNotes‏ (‎*.fnx);;כל הקבצים (*)</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="1651"/>
@@ -1217,12 +1240,12 @@ Please disable tray in Preferences.</source>
     </message>
     <message>
         <location filename="../../fn.cpp" line="1732"/>
-        <location filename="../../fn.cpp" line="5654"/>
-        <location filename="../../fn.cpp" line="5663"/>
-        <location filename="../../fn.cpp" line="5802"/>
-        <location filename="../../fn.cpp" line="5993"/>
-        <location filename="../../fn.cpp" line="6002"/>
-        <location filename="../../fn.cpp" line="6029"/>
+        <location filename="../../fn.cpp" line="5657"/>
+        <location filename="../../fn.cpp" line="5666"/>
+        <location filename="../../fn.cpp" line="5805"/>
+        <location filename="../../fn.cpp" line="5996"/>
+        <location filename="../../fn.cpp" line="6005"/>
+        <location filename="../../fn.cpp" line="6032"/>
         <source>Untitled</source>
         <translation>ללא כותרת</translation>
     </message>
@@ -1255,12 +1278,6 @@ Please disable tray in Preferences.</source>
         <location filename="../../fn.cpp" line="2935"/>
         <source>Tag(s) for this node</source>
         <translation>תגיות למפרק זה</translation>
-    </message>
-    <message>
-        <location filename="../../fn.cpp" line="3022"/>
-        <location filename="../../fn.cpp" line="4523"/>
-        <source>Image Files (*.svg *.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)</source>
-        <translation>קובצי תמונות (‎*.svg *.png *.jpg *.jpeg *.bmp *.gif);;כל הקבצים (*)</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="3191"/>
@@ -1299,125 +1316,120 @@ Please disable tray in Preferences.</source>
     </message>
     <message>
         <location filename="../../fn.cpp" line="4419"/>
-        <location filename="../../fn.cpp" line="4595"/>
+        <location filename="../../fn.cpp" line="4598"/>
         <source>Scale to</source>
         <translation>שינוי גודל לכדי</translation>
     </message>
     <message>
         <location filename="../../fn.cpp" line="4423"/>
-        <location filename="../../fn.cpp" line="4598"/>
+        <location filename="../../fn.cpp" line="4601"/>
         <source>%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4589"/>
+        <location filename="../../fn.cpp" line="4592"/>
         <source>Scale Image(s)</source>
         <translation>שינוי גודל תמונות</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4726"/>
+        <location filename="../../fn.cpp" line="4729"/>
         <source>untitled</source>
         <translation>ללא כותרת</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4758"/>
+        <location filename="../../fn.cpp" line="4761"/>
         <source>Error</source>
         <translation>שגיאה</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4759"/>
+        <location filename="../../fn.cpp" line="4762"/>
         <source>&lt;center&gt;&lt;b&gt;&lt;big&gt;Image cannot be saved! Retry?&lt;/big&gt;&lt;/b&gt;&lt;/center&gt;</source>
         <translation>&lt;center&gt;&lt;b&gt;&lt;big&gt;לא ניתן לשמור את התמונה! לנסות שוב?&lt;/big&gt;&lt;/b&gt;&lt;/center&gt;</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4760"/>
+        <location filename="../../fn.cpp" line="4763"/>
         <source>&lt;center&gt;Maybe you did not choose a proper extension&lt;/center&gt;
 &lt;center&gt;or do not have write permission.&lt;/center&gt;&lt;p&gt;&lt;/p&gt;</source>
         <translation>&lt;center&gt;אולי לא בחרת את הסיומת הנכונה&lt;/center&gt;
 &lt;center&gt;או שיש בעיית הרשאות.&lt;/center&gt;&lt;p&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4792"/>
+        <location filename="../../fn.cpp" line="4795"/>
         <source>Save Image As...</source>
         <translation>שמירת תמונה בשם…</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4794"/>
-        <source>Image Files (*.png *.jpg *.jpeg *.bmp);;All Files (*)</source>
-        <translation>קובצי תמונות (‎*.png *.jpg *.jpeg *.bmp);;כל הקבצים (*)</translation>
-    </message>
-    <message>
-        <location filename="../../fn.cpp" line="4847"/>
+        <location filename="../../fn.cpp" line="4850"/>
         <source>Insert Table</source>
         <translation>הוספת טבלה</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4853"/>
+        <location filename="../../fn.cpp" line="4856"/>
         <source>Rows:</source>
         <translation>שורות:</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="4859"/>
+        <location filename="../../fn.cpp" line="4862"/>
         <source>Columns:</source>
         <translation>עמודות:</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5743"/>
+        <location filename="../../fn.cpp" line="5746"/>
         <source>Print Document</source>
         <translation>הדפסת מסמך</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5749"/>
+        <location filename="../../fn.cpp" line="5752"/>
         <source>Printing completed.</source>
         <translation>ההדפסה הושלמה.</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5751"/>
+        <location filename="../../fn.cpp" line="5754"/>
         <source>Printing in progress...</source>
         <translation>מתבצעת הדפסה…</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5770"/>
+        <location filename="../../fn.cpp" line="5773"/>
         <source>Export HTML</source>
         <translation>ייצוא HTML</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5775"/>
+        <location filename="../../fn.cpp" line="5778"/>
         <source>Export:</source>
         <translation>ייצוא:</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5776"/>
+        <location filename="../../fn.cpp" line="5779"/>
         <source>&amp;Current node</source>
         <translation>מפרק &amp;נוכחי</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5778"/>
+        <location filename="../../fn.cpp" line="5781"/>
         <source>With all &amp;sub-nodes</source>
         <translation>&amp;עם כל תת־המפרקים</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5779"/>
+        <location filename="../../fn.cpp" line="5782"/>
         <source>&amp;All nodes</source>
         <translation>&amp;כל המפרקים</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5791"/>
+        <location filename="../../fn.cpp" line="5794"/>
         <source>Output file:</source>
         <translation>קובץ פלט:</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5810"/>
+        <location filename="../../fn.cpp" line="5813"/>
         <source>Select path</source>
         <translation>בחירת נתיב</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5851"/>
+        <location filename="../../fn.cpp" line="5854"/>
         <source>Question</source>
         <translation>שאלה</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="5852"/>
+        <location filename="../../fn.cpp" line="5855"/>
         <source>The file already exists.
 Do you want to replace it?
 </source>
@@ -1426,106 +1438,101 @@ Do you want to replace it?
 </translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6034"/>
+        <location filename="../../fn.cpp" line="6037"/>
         <source>Save HTML As...</source>
         <translation>לשמור HTML בשם…</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6036"/>
-        <source>HTML Files (*.html *.htm)</source>
-        <translation>קובצי HTML‏ (‎*.html *.htm)</translation>
-    </message>
-    <message>
-        <location filename="../../fn.cpp" line="6060"/>
+        <location filename="../../fn.cpp" line="6063"/>
         <source>Set Password</source>
         <translation>הגדרת ססמה</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6069"/>
+        <location filename="../../fn.cpp" line="6072"/>
         <source>Type password</source>
         <translation>נא להקליד ססמה</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6081"/>
+        <location filename="../../fn.cpp" line="6084"/>
         <source>Retype password</source>
         <translation>להקליד את הססמה שוב</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6153"/>
+        <location filename="../../fn.cpp" line="6156"/>
         <source>&lt;center&gt;Passwords were different. Retry!&lt;/center&gt;</source>
         <translation>&lt;center&gt;הססמאות אינן זהות. נא לנסות שוב!&lt;/center&gt;</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6173"/>
-        <location filename="../../fn.cpp" line="6181"/>
+        <location filename="../../fn.cpp" line="6176"/>
+        <location filename="../../fn.cpp" line="6184"/>
         <source>Enter Password</source>
         <translation>נא להקליד ססמה</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6253"/>
+        <location filename="../../fn.cpp" line="6256"/>
         <source>&lt;center&gt;Wrong password. Retry!&lt;/center&gt;</source>
         <translation>&lt;center&gt;ססמה שגויה. נא לנסות שוב!&lt;/center&gt;</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6295"/>
+        <location filename="../../fn.cpp" line="6298"/>
         <source>A lightweight notes manager</source>
         <translation>מנהל פתקיות קליל</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6296"/>
+        <location filename="../../fn.cpp" line="6299"/>
         <source>based on Qt</source>
         <translation>מבוסס על Qt</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6297"/>
+        <location filename="../../fn.cpp" line="6300"/>
         <source>Author</source>
         <translation>יוצר</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6299"/>
-        <location filename="../../fn.cpp" line="6300"/>
+        <location filename="../../fn.cpp" line="6302"/>
+        <location filename="../../fn.cpp" line="6303"/>
         <source>About FeatherNotes</source>
         <translation>על אודות FeatherNotes</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6299"/>
+        <location filename="../../fn.cpp" line="6302"/>
         <source>Translators</source>
         <translation>מתרגמים</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6483"/>
+        <location filename="../../fn.cpp" line="6486"/>
         <source>See Preferences → Text → Spell Checking!</source>
         <translation>יש לפנות אל העדפות ← טקסט ← בדיקת איות!</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6499"/>
+        <location filename="../../fn.cpp" line="6502"/>
         <source>You need to add a Hunspell dictionary.</source>
         <translation>יש להוסיף מילון Hunspell.</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6504"/>
+        <location filename="../../fn.cpp" line="6507"/>
         <source>The Hunspell dictionary does not exist.</source>
         <translation>מילון Hunspell לא קיים.</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6512"/>
+        <location filename="../../fn.cpp" line="6515"/>
         <source>The Hunspell dictionary is not accompanied by an affix file.</source>
         <translation>מילון ה־Hunspell אינו מלווה בקובץ מוספית.</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6530"/>
-        <location filename="../../fn.cpp" line="6545"/>
-        <location filename="../../fn.cpp" line="6557"/>
+        <location filename="../../fn.cpp" line="6533"/>
+        <location filename="../../fn.cpp" line="6548"/>
+        <location filename="../../fn.cpp" line="6560"/>
         <source>No misspelling from text cursor.</source>
         <translation>אין שגיאות איות מסמן הטקסט.</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6569"/>
+        <location filename="../../fn.cpp" line="6572"/>
         <source>Spell Checking</source>
         <translation>בדיקת איות</translation>
     </message>
     <message>
-        <location filename="../../fn.cpp" line="6298"/>
+        <location filename="../../fn.cpp" line="6301"/>
         <source>aka.</source>
         <translation>גם בשם</translation>
     </message>
@@ -1606,7 +1613,11 @@ this dialog and also on exit.
 
 This may not work correctly
 with some window managers.</source>
-        <translation type="unfinished"></translation>
+        <translation>שומר את המיקום לאחר סגירת
+החלונית הזאת וכן ביציאה.
+
+יכול להיות שזה לא יעבוד כראוי
+עם חלק ממנהלי החלונות.</translation>
     </message>
     <message>
         <location filename="../../prefDialog.ui" line="117"/>
@@ -1757,12 +1768,13 @@ Takes effect after closing this dialog.</source>
         <source>If this option is checked, the opened document will
 be saved on exiting without prompt and without
 showing a warning if saving is not possible.</source>
-        <translation type="unfinished"></translation>
+        <translation>אם האפשרות הזאת מסומנת, המסמך הפתוח יישמר
+עם היציאה בלי הודעה ובלי אזהרה אם לא ניתן לשמור.</translation>
     </message>
     <message>
         <location filename="../../prefDialog.ui" line="353"/>
         <source>Save opened document on exiting</source>
-        <translation type="unfinished"></translation>
+        <translation>שמירת המסמך הפתוח עם היציאה</translation>
     </message>
     <message>
         <location filename="../../prefDialog.ui" line="376"/>
@@ -1813,12 +1825,12 @@ name but ending with &quot;.aff&quot;.</source>
     <message>
         <location filename="../../prefDialog.ui" line="503"/>
         <source>By default, all nodes are expanded on opening a document.</source>
-        <translation type="unfinished"></translation>
+        <translation>כברירת מחדל, כל הצמתים מורחבים עם פתיחת מסמך.</translation>
     </message>
     <message>
         <location filename="../../prefDialog.ui" line="506"/>
         <source>Remember expanded states of nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>שמירת המצב המורחב של צמתים</translation>
     </message>
     <message>
         <location filename="../../prefDialog.ui" line="530"/>
@@ -1858,8 +1870,8 @@ name but ending with &quot;.aff&quot;.</source>
     </message>
     <message>
         <location filename="../../pref.cpp" line="649"/>
-        <source>Hunspell Dictionary Files (*.dic)</source>
-        <translation>קובצי מילון Hunspell‏ (‎*.dic)</translation>
+        <source>Hunspell Dictionary Files</source>
+        <translation>קובצי מילון Hunspell‏</translation>
     </message>
 </context>
 <context>
