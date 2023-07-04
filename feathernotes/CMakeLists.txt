@@ -4,8 +4,10 @@ set(HUNSPELL_MINIMUM_VERSION "1.6")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-# OS/2 needs an additional lib
-if(OS2)
+if(HAIKU)
+  set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -lnetwork")
+elseif(OS2)
+  # OS/2 needs an additional lib
   set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -lcx")
 endif()
 

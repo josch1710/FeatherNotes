@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Pedram Pourang (aka Tsu Jan) 2016-2022 <tsujan2000@gmail.com>
+ * Copyright (C) Pedram Pourang (aka Tsu Jan) 2016-2023 <tsujan2000@gmail.com>
  *
  * FeatherNotes is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -79,6 +79,7 @@ public:
 
 signals:
     void FNDocDropped (const QString &path);
+    void searchRequest();
 
 protected:
     /* see Qt -> "qabstractitemview.cpp" */
@@ -206,6 +207,16 @@ protected:
 #endif
             return;
         QTreeView::mouseMoveEvent (event);
+    }
+
+    void keyPressEvent (QKeyEvent *event) override {
+        if (event->key() == Qt::Key_Slash)
+        {
+            emit searchRequest();
+            event->accept();
+            return;
+        }
+        QTreeView::keyPressEvent (event);
     }
 
 private:
